@@ -3,6 +3,7 @@ package com.locdhph46788.asm1_ph46788;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
@@ -14,7 +15,8 @@ public interface APIService {
     Call<List<CarModel>> getCars();
 
     @POST("/api/add_car")
-    Call<List<CarModel>> addCar();
+    Call<List<CarModel>> addCar(@Body CarModel car);
+
 
     @DELETE("/api/del_car")
     Call<List<CarModel>> delCar();

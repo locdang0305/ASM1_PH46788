@@ -2,6 +2,7 @@ package com.locdhph46788.asm1_ph46788;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
 
-    Context context;
+    Context context ;
     List<CarModel> listCar;
 
     Retrofit retrofit = new Retrofit.Builder()
@@ -62,6 +65,27 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
 
+                AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
+                alert.setTitle("Xác nhận xóa xe  !");
+
+                alert.setMessage("Bạn có muốn xóa xe này?");
+                alert.setCancelable(false);
+                alert.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+
+                    }
+                });
+
+                alert.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(context, "Hủy", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                AlertDialog alertDialog = alert.create();
+                alertDialog.show();
             }
         });
     }

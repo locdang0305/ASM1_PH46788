@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         rcvCar = findViewById(R.id.rcv_car);
         btnAdd = findViewById(R.id.fab_add);
@@ -105,11 +104,32 @@ public class MainActivity extends AppCompatActivity {
             } else if (status.equals("")) {
                 Toast.makeText(getApplicationContext(), "Vui lòng nhập tình trạng", Toast.LENGTH_SHORT).show();
             } else {
-                if (true) {
-                    CarModel car = new CarModel(name, price, quantity, status);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Không thêm được", Toast.LENGTH_SHORT).show();
-                }
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(APIService.DOMAIN)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build();
+
+                APIService apiService = retrofit.create(APIService.class);
+
+                Call<List<CarModel>> call = apiService.addCar(new CarModel(name, price, quantity, status));
+
+
+                call.enqueue(new Callback<List<CarModel>>() {
+                    @Override
+                    public void onResponse(Call<List<CarModel>> call, Response<List<CarModel>> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(MainActivity.this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+                            listCar = response.body();
+                            carAdapter.notifyDataSetChanged();
+                            alertDialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<CarModel>> call, Throwable t) {
+                        Log.e("zzzzz", "onFailure: " + t.getMessage());
+                    }
+                });
             }
         });
         alertDialog.show();
