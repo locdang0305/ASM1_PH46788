@@ -1,7 +1,7 @@
 package com.locdhph46788.asm1_ph46788;
 
 public class CarModel {
-    private String id;
+    private String _id;
     private String name;
     private String price;
     private String quantity;
@@ -15,20 +15,20 @@ public class CarModel {
         this.quantity = quantity;
         this.status = status;
     }
-    public CarModel(String id, String name, String price, String quantity, String status) {
-        this.id = id;
+    public CarModel(String _id, String name, String price, String quantity, String status) {
+        this._id = _id;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.status = status;
     }
 
-    public String getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getName() {

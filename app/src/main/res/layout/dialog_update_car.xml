@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Cập Nhật Xe Hơi "
+        android:textColor="#03A9F4"
+        android:textSize="30dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Id:"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="uojbafoansfou"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/edt_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập tên" />
+
+    <EditText
+        android:id="@+id/edt_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập giá" />
+
+    <EditText
+        android:id="@+id/edt_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập số lượng" />
+
+
+    <EditText
+        android:id="@+id/edt_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nhập tình trạng" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/btn_update_car"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#FF5722"
+            android:text="Cập nhật"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+</LinearLayout>

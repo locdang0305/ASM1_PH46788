@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,16 +28,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
 
-    Context context ;
+    Context context;
     List<CarModel> listCar;
 
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(APIService.DOMAIN)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
-
-
-    public CarAdapter(Context context, List<CarModel> listCar) {
+    public CarAdapter(Activity context, List<CarModel> listCar) {
         this.context = context;
         this.listCar = listCar;
     }
@@ -51,14 +46,23 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull CarAdapter.ViewHolder holder, int position) {
-        holder.tvName.setText(listCar.get(position).getName());
-        holder.tvPrice.setText(listCar.get(position).getPrice() + "$");
-        holder.tvQuantity.setText(listCar.get(position).getQuantity() + "");
-        holder.tvStatus.setText(listCar.get(position).getStatus());
+        CarModel car = listCar.get(position);
+        holder.tvId.setText(car.get_id());
+        holder.tvName.setText(car.getName());
+        holder.tvPrice.setText(car.getPrice() + "$");
+        holder.tvQuantity.setText(car.getQuantity() + "");
+        if (Boolean.parseBoolean(car.getStatus())) {
+            holder.tvStatus.setText("Mới");
+        } else {
+            holder.tvStatus.setText("Cũ");
+        }
+
         holder.btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String id = car.get_id();
+                CarModel objUpdateCar = listCar.get(holder.getAdapterPosition());
+                DialogUpdateCar(id, objUpdateCar);
             }
         });
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -69,12 +73,38 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
 
                 alert.setTitle("Xác nhận xóa xe  !");
 
-                alert.setMessage("Bạn có muốn xóa xe này?");
+                alert.setMessage("Bạn có muốn xóa xe có id:" + car.get_id());
                 alert.setCancelable(false);
                 alert.setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
+                        String id = car.get_id();
+                        Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl(APIService.DOMAIN)
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
 
+                        APIService apiService = retrofit.create(APIService.class);
+
+                        Call<List<CarModel>> call = apiService.delCar(id);
+
+                        call.enqueue(new Callback<List<CarModel>>() {
+                            @Override
+                            public void onResponse(Call<List<CarModel>> call, Response<List<CarModel>> response) {
+                                if (response.isSuccessful()) {
+                                    Toast.makeText(context, "Xóa thành công", Toast.LENGTH_SHORT).show();
+                                    notifyItemRemoved(holder.getAdapterPosition());
+                                    notifyDataSetChanged();
+                                    listCar = response.body();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<CarModel>> call, Throwable t) {
+                                Toast.makeText(context, "Xóa không thành công", Toast.LENGTH_SHORT).show();
+                                Log.e("zzzzz", "onFailure: " + t.getMessage());
+                            }
+                        });
                     }
                 });
 
@@ -112,5 +142,82 @@ public class CarAdapter extends RecyclerView.Adapter<CarAdapter.ViewHolder> {
             btnDelete = itemView.findViewById(R.id.btn_delete);
         }
     }
+
+    public void DialogUpdateCar(String idUpdate, CarModel objUpdateCar) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_update_car, null);
+        alert.setView(view);
+
+        TextView tvId = view.findViewById(R.id.tv_id);
+        EditText edtName = view.findViewById(R.id.edt_name);
+        EditText edtPrice = view.findViewById(R.id.edt_price);
+        EditText edtQuantity = view.findViewById(R.id.edt_quantity);
+        EditText edtStatus = view.findViewById(R.id.edt_status);
+        Button btnUpdate = view.findViewById(R.id.btn_update_car);
+
+        tvId.setText(objUpdateCar.get_id());
+        edtName.setText(objUpdateCar.getName());
+        edtPrice.setText(objUpdateCar.getPrice());
+        edtQuantity.setText(objUpdateCar.getQuantity());
+        edtStatus.setText(objUpdateCar.getStatus());
+
+        alert.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(context, "Hủy", Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog alertDialog = alert.create();
+        alertDialog.show();
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = edtName.getText().toString();
+                String price = edtPrice.getText().toString();
+                String quantity = edtQuantity.getText().toString();
+                String status = edtStatus.getText().toString();
+                if (name.equals("")) {
+                    Toast.makeText(context, "Vui lòng nhập tên", Toast.LENGTH_SHORT).show();
+                } else if (price.equals("")) {
+                    Toast.makeText(context, "Vui lòng nhập giá", Toast.LENGTH_SHORT).show();
+                } else if (quantity.equals("")) {
+                    Toast.makeText(context, "Vui lòng nhập số lương", Toast.LENGTH_SHORT).show();
+                } else if (status.equals("")) {
+                    Toast.makeText(context, "Vui lòng nhập tình trạng", Toast.LENGTH_SHORT).show();
+                } else {
+                    Retrofit retrofit = new Retrofit.Builder()
+                            .baseUrl(APIService.DOMAIN)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+
+                    APIService apiService = retrofit.create(APIService.class);
+
+                    Call<List<CarModel>> call = apiService.updateCar(idUpdate, new CarModel(name, price, quantity, status));
+
+                    call.enqueue(new Callback<List<CarModel>>() {
+                        @Override
+                        public void onResponse(Call<List<CarModel>> call, Response<List<CarModel>> response) {
+                            if (response.isSuccessful()) {
+                                Toast.makeText(context, "Sửa thành công", Toast.LENGTH_SHORT).show();
+                                notifyDataSetChanged();
+                                alertDialog.dismiss();
+                                listCar = response.body();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<CarModel>> call, Throwable t) {
+                            Log.e("zzzzz", "onFailure: " + t.getMessage());
+                        }
+                    });
+                }
+            }
+
+
+        });
+
+    }
+
 
 }

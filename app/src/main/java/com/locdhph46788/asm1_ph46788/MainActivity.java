@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<CarModel>> call, Response<List<CarModel>> response) {
                 if (response.isSuccessful()) {
                     listCar = response.body();
-                    carAdapter = new CarAdapter(getApplicationContext(), listCar);
+                    carAdapter = new CarAdapter(MainActivity.this, listCar);
 
                     LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
                     rcvCar.setLayoutManager(linearLayoutManager);
@@ -113,14 +113,19 @@ public class MainActivity extends AppCompatActivity {
 
                 Call<List<CarModel>> call = apiService.addCar(new CarModel(name, price, quantity, status));
 
-
                 call.enqueue(new Callback<List<CarModel>>() {
                     @Override
                     public void onResponse(Call<List<CarModel>> call, Response<List<CarModel>> response) {
                         if (response.isSuccessful()) {
                             Toast.makeText(MainActivity.this, "Thêm thành công", Toast.LENGTH_SHORT).show();
+                            listCar.clear();
                             listCar = response.body();
-                            carAdapter.notifyDataSetChanged();
+
+                            carAdapter = new CarAdapter(MainActivity.this, listCar);
+
+                            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+                            rcvCar.setLayoutManager(linearLayoutManager);
+                            rcvCar.setAdapter(carAdapter);
                             alertDialog.dismiss();
                         }
                     }
